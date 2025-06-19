@@ -130,11 +130,25 @@ class _GameScreenState extends State<GameScreen> {
       case "walking":
         return FontAwesomeIcons.walking;
       case "backpack":
-        return FontAwesomeIcons.shoppingBag;
+        return FontAwesomeIcons.suitcase;
       case "user-clock":
         return FontAwesomeIcons.userClock;
       case "redo":
         return FontAwesomeIcons.redo;
+      case "dumbbell":
+        return FontAwesomeIcons.dumbbell;
+      case "star":
+        return FontAwesomeIcons.star;
+      case "birthdayCake":
+        return FontAwesomeIcons.birthdayCake;
+      case "map":
+        return FontAwesomeIcons.map;
+      case "wind":
+        return FontAwesomeIcons.wind;
+      case "phone":
+        return FontAwesomeIcons.phone;
+      case "skull":
+        return FontAwesomeIcons.skull;
       default:
         return FontAwesomeIcons.questionCircle;
     }
@@ -155,6 +169,179 @@ class _GameScreenState extends State<GameScreen> {
       default:
         return Colors.white;
     }
+  }
+
+  Color _getCharacterClassColor() {
+    switch (widget.character.characterClass.toLowerCase()) {
+      case "guerreiro":
+        return Colors.redAccent;
+      case "mago":
+        return Colors.blueAccent;
+      case "ladino":
+        return Colors.greenAccent;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Widget _buildStatDisplay(
+    String label,
+    int currentValue,
+    int maxValue,
+    Color color,
+    IconData icon,
+  ) {
+    double percentage = currentValue / maxValue;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  FaIcon(icon, color: color, size: 14),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: Colors.grey[300],
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                '$currentValue/$maxValue',
+                style: TextStyle(color: Colors.grey[300], fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          LinearProgressIndicator(
+            value: percentage,
+            backgroundColor: Colors.grey[700],
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAttributeRow(
+    String label,
+    String value,
+    IconData icon, {
+    Color? color,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          FaIcon(icon, color: color ?? Colors.grey[400], size: 16),
+          const SizedBox(width: 10),
+          Text(
+            '$label: ',
+            style: TextStyle(color: Colors.grey[300], fontSize: 14),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCharacterSummaryPanel() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[900]!.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            widget.character.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: _getCharacterClassColor().withOpacity(0.8),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Text(
+              widget.character.characterClass.toUpperCase(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildStatDisplay(
+            "HP",
+            _hp,
+            100,
+            Colors.redAccent,
+            FontAwesomeIcons.heartbeat,
+          ),
+          _buildStatDisplay(
+            "Energia",
+            _energy,
+            50,
+            Colors.blueAccent,
+            FontAwesomeIcons.bolt,
+          ),
+          _buildStatDisplay(
+            "Experiência",
+            _experience,
+            100,
+            Colors.purpleAccent,
+            FontAwesomeIcons.star,
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _isChapterEndSegment(StorySegment segment) {
+    return segment.options.any(
+      (option) =>
+          option.text.contains('[Fim do Capítulo') ||
+          option.text.contains('[Fim do Jogo]'),
+    );
+  }
+
+  void _goToNextChapter() {
+    setState(() {
+      final currentChapterEndOption = _currentSegment.options.firstWhere(
+        (option) =>
+            option.text.contains('[Fim do Capítulo') ||
+            option.text.contains('[Fim do Jogo]'),
+      );
+      _currentSegment = storyData.firstWhere(
+        (segment) => segment.id == currentChapterEndOption.next,
+      );
+      _history = [_currentSegment.id]; // Reset history for new chapter
+    });
   }
 
   @override
@@ -269,6 +456,46 @@ class _GameScreenState extends State<GameScreen> {
                       );
                     },
                   ),
+                  if (_isChapterEndSegment(_currentSegment)) ...[
+                    const SizedBox(height: 24),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _goToNextChapter,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.blueAccent, // Cor de fundo do botão
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 15,
+                          ), // Preenchimento
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              10,
+                            ), // Borda arredondada
+                          ),
+                        ),
+                        child: Text(
+                          _currentSegment.options
+                                  .firstWhere(
+                                    (option) =>
+                                        option.text.contains(
+                                          '[Fim do Capítulo',
+                                        ) ||
+                                        option.text.contains('[Fim do Jogo]'),
+                                  )
+                                  .text
+                                  .contains('[Fim do Jogo]')
+                              ? 'Jogar Novamente'
+                              : 'Próximo Capítulo',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 24),
                   // Character Panel Summary for Mobile (Optional, can be expanded)
                   _buildCharacterSummaryPanel(),
@@ -473,6 +700,48 @@ class _GameScreenState extends State<GameScreen> {
                             },
                           ),
                         ),
+                        if (_isChapterEndSegment(_currentSegment)) ...[
+                          const SizedBox(height: 24),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: _goToNextChapter,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.blueAccent, // Cor de fundo do botão
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 15,
+                                ), // Preenchimento
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    10,
+                                  ), // Borda arredondada
+                                ),
+                              ),
+                              child: Text(
+                                _currentSegment.options
+                                        .firstWhere(
+                                          (option) =>
+                                              option.text.contains(
+                                                '[Fim do Capítulo',
+                                              ) ||
+                                              option.text.contains(
+                                                '[Fim do Jogo]',
+                                              ),
+                                        )
+                                        .text
+                                        .contains('[Fim do Jogo]')
+                                    ? 'Jogar Novamente'
+                                    : 'Próximo Capítulo',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -481,176 +750,6 @@ class _GameScreenState extends State<GameScreen> {
             );
           }
         },
-      ),
-    );
-  }
-
-  Widget _buildStatDisplay(
-    String label,
-    int currentValue,
-    int maxValue,
-    Color color,
-    IconData icon,
-  ) {
-    double percentage = currentValue / maxValue;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  FaIcon(icon, color: color, size: 14),
-                  const SizedBox(width: 8),
-                  Text(
-                    label,
-                    style: TextStyle(color: Colors.grey[300], fontSize: 14),
-                  ),
-                ],
-              ),
-              Text(
-                "$currentValue/$maxValue",
-                style: TextStyle(
-                  color: color,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          LinearProgressIndicator(
-            value: percentage,
-            backgroundColor: Colors.grey[700],
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 6,
-            borderRadius: BorderRadius.circular(3),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAttributeRow(
-    String label,
-    String value,
-    IconData icon, {
-    Color? color,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        children: [
-          FaIcon(icon, color: color ?? Colors.grey[400], size: 14),
-          const SizedBox(width: 10),
-          Text(
-            "$label: ",
-            style: TextStyle(color: Colors.grey[400], fontSize: 13),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              color: color ?? Colors.white,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getCharacterClassColor() {
-    switch (widget.character.characterClass) {
-      case "beta":
-        return Colors.blueAccent;
-      case "alpha":
-        return Colors.purpleAccent;
-      case "sigma":
-        return Colors.redAccent;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Widget _buildCharacterSummaryPanel() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[900]!.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: Colors.grey[800]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "${widget.character.name} (${widget.character.characterClass.toUpperCase()})",
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildStatDisplay(
-            "HP",
-            _hp,
-            100,
-            Colors.redAccent,
-            FontAwesomeIcons.heartbeat,
-          ),
-          _buildStatDisplay(
-            "Energia",
-            _energy,
-            50,
-            Colors.blueAccent,
-            FontAwesomeIcons.bolt,
-          ),
-          _buildStatDisplay(
-            "Experiência",
-            _experience,
-            100,
-            Colors.purpleAccent,
-            FontAwesomeIcons.star,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "Atributos Principais:",
-            style: TextStyle(
-              color: Colors.grey[300],
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          _buildAttributeRow(
-            "Força",
-            widget.character.stats["strength"].toString(),
-            FontAwesomeIcons.dumbbell,
-            color: Colors.blue.shade300,
-          ),
-          _buildAttributeRow(
-            "Velocidade",
-            widget.character.stats["speed"].toString(),
-            FontAwesomeIcons.running,
-            color: Colors.green.shade300,
-          ),
-          _buildAttributeRow(
-            "Psíquico",
-            widget.character.stats["psychic"].toString(),
-            FontAwesomeIcons.brain,
-            color: Colors.purple.shade300,
-          ),
-          _buildAttributeRow(
-            "Medo",
-            widget.character.stats["fear"].toString(),
-            FontAwesomeIcons.skull,
-            color: Colors.red.shade300,
-          ),
-        ],
       ),
     );
   }
