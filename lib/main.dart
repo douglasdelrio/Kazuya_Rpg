@@ -114,7 +114,7 @@ class _MyAppState extends State<MyApp> {
         return LayoutBuilder(
           builder: (context, constraints) {
             if (constraints.maxWidth > 600) {
-              return Center(child: Container(width: 500, child: child));
+              return Center(child: SizedBox(width: 500, child: child));
             }
             return child!;
           },

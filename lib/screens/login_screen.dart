@@ -52,10 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black,
-                  ],
+                  colors: [Colors.transparent, Colors.black],
                 ),
               ),
             ),
@@ -95,13 +92,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 48,
                             fontWeight: FontWeight.bold,
                             foreground: Paint()
-                              ..shader = const LinearGradient(
-                                colors: <Color>[
-                                  Color(0xFF64B5F6), // blue-400
-                                  Color(0xFF9C27B0), // purple-500
-                                  Color(0xFFF44336), // red-500
-                                ],
-                              ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                              ..shader =
+                                  const LinearGradient(
+                                    colors: <Color>[
+                                      Color(0xFF64B5F6), // blue-400
+                                      Color(0xFF9C27B0), // purple-500
+                                      Color(0xFFF44336), // red-500
+                                    ],
+                                  ).createShader(
+                                    const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0),
+                                  ),
                           ),
                         ),
                       ],
@@ -136,7 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Username Input
                         const Text(
                           'Nome de Usuário',
-                          style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         TextField(
@@ -147,14 +151,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             hintStyle: TextStyle(color: Colors.grey[500]),
                             filled: true,
                             fillColor: Colors.grey[800],
-                            prefixIcon: Icon(FontAwesomeIcons.user, color: Colors.grey[500], size: 18),
+                            prefixIcon: Icon(
+                              FontAwesomeIcons.user,
+                              color: Colors.grey[500],
+                              size: 18,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                               borderSide: BorderSide.none,
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Colors.redAccent,
+                                width: 1.5,
+                              ),
                             ),
                           ),
                         ),
@@ -163,7 +174,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Password Input
                         const Text(
                           'Senha',
-                          style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         TextField(
@@ -175,14 +190,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             hintStyle: TextStyle(color: Colors.grey[500]),
                             filled: true,
                             fillColor: Colors.grey[800],
-                            prefixIcon: Icon(FontAwesomeIcons.lock, color: Colors.grey[500], size: 18),
+                            prefixIcon: Icon(
+                              FontAwesomeIcons.lock,
+                              color: Colors.grey[500],
+                              size: 18,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                               borderSide: BorderSide.none,
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Colors.redAccent,
+                                width: 1.5,
+                              ),
                             ),
                           ),
                         ),
@@ -195,27 +217,39 @@ class _LoginScreenState extends State<LoginScreen> {
                             Row(
                               children: [
                                 Checkbox(
-                                  value: false, // TODO: Implement remember me logic
+                                  value:
+                                      false, // TODO: Implement remember me logic
                                   onChanged: (bool? value) {},
-                                  fillColor: MaterialStateProperty.resolveWith<Color>(
-                                    (Set<MaterialState> states) {
-                                      if (states.contains(MaterialState.selected)) {
-                                        return Colors.redAccent; // Color when checkbox is checked
-                                      }
-                                      return Colors.grey[800]!; // Color when checkbox is unchecked
-                                    },
-                                  ),
+                                  fillColor: WidgetStateProperty.resolveWith<Color>((
+                                    Set<WidgetState> states,
+                                  ) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return Colors
+                                          .redAccent; // Color when checkbox is checked
+                                    }
+                                    return Colors
+                                        .grey[800]!; // Color when checkbox is unchecked
+                                  }),
                                   checkColor: Colors.white,
                                   side: BorderSide(color: Colors.grey[700]!),
                                 ),
-                                const Text('Lembrar de mim', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                                const Text(
+                                  'Lembrar de mim',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ],
                             ),
                             TextButton(
                               onPressed: () {},
                               child: const Text(
                                 'Esqueceu a senha?',
-                                style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontSize: 13,
+                                ),
                               ),
                             ),
                           ],
@@ -227,25 +261,43 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: double.infinity,
                           child: ElevatedButton.icon(
                             onPressed: _handleLogin,
-                            icon: const Icon(FontAwesomeIcons.signInAlt, size: 18),
-                            label: const Text('Entrar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: Colors.transparent, // Make button transparent to show gradient
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                            ).copyWith(
-                              overlayColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                                  if (states.contains(MaterialState.pressed)) {
-                                    return Colors.red[700]!.withOpacity(0.5);
-                                  }
-                                  return Colors.transparent;
-                                },
+                            icon: const Icon(
+                              FontAwesomeIcons.signInAlt,
+                              size: 18,
+                            ),
+                            label: const Text(
+                              'Entrar',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
+                            style:
+                                ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  backgroundColor: Colors
+                                      .transparent, // Make button transparent to show gradient
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                ).copyWith(
+                                  overlayColor:
+                                      WidgetStateProperty.resolveWith<Color>((
+                                        Set<WidgetState> states,
+                                      ) {
+                                        if (states.contains(
+                                          WidgetState.pressed,
+                                        )) {
+                                          return Colors.red[700]!.withOpacity(
+                                            0.5,
+                                          );
+                                        }
+                                        return Colors.transparent;
+                                      }),
+                                ),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -255,8 +307,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: double.infinity,
                           child: OutlinedButton.icon(
                             onPressed: widget.onRegisterPressed,
-                            icon: const Icon(FontAwesomeIcons.userPlus, size: 18, color: Colors.white),
-                            label: const Text('Criar Conta', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
+                            icon: const Icon(
+                              FontAwesomeIcons.userPlus,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                            label: const Text(
+                              'Criar Conta',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               side: BorderSide(color: Colors.grey[700]!),
@@ -274,11 +337,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text.rich(
                             TextSpan(
                               text: 'Ao continuar, você concorda com nossos ',
-                              style: TextStyle(color: Colors.grey[500], fontSize: 11),
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 11,
+                              ),
                               children: [
                                 TextSpan(
                                   text: 'Termos de Serviço',
-                                  style: const TextStyle(color: Colors.redAccent, decoration: TextDecoration.underline),
+                                  style: const TextStyle(
+                                    color: Colors.redAccent,
+                                    decoration: TextDecoration.underline,
+                                  ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       // TODO: Navigate to Terms of Service
@@ -306,5 +375,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-

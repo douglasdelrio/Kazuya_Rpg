@@ -7,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class GameScreen extends StatefulWidget {
   final Character character;
 
-  const GameScreen({Key? key, required this.character}) : super(key: key);
+  const GameScreen({super.key, required this.character});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -18,9 +18,9 @@ class _GameScreenState extends State<GameScreen> {
   List<int> _history = []; // To keep track of previous segments for navigation
 
   // Character stats (can be expanded)
-  int _hp = 100;
-  int _energy = 50;
-  int _experience = 0;
+  final int _hp = 100;
+  final int _energy = 50;
+  final int _experience = 0;
 
   @override
   void initState() {

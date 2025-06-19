@@ -7,10 +7,10 @@ class RegisterScreen extends StatefulWidget {
   final VoidCallback onBackToLoginPressed;
 
   const RegisterScreen({
-    Key? key,
+    super.key,
     required this.onRegisterSuccess,
     required this.onBackToLoginPressed,
-  }) : super(key: key);
+  });
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -347,11 +347,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 ).copyWith(
                                   overlayColor:
-                                      MaterialStateProperty.resolveWith<Color>((
-                                        Set<MaterialState> states,
+                                      WidgetStateProperty.resolveWith<Color>((
+                                        Set<WidgetState> states,
                                       ) {
                                         if (states.contains(
-                                          MaterialState.pressed,
+                                          WidgetState.pressed,
                                         )) {
                                           return Colors.red[700]!.withOpacity(
                                             0.5,
