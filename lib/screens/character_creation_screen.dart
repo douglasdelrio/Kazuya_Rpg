@@ -253,8 +253,10 @@ class _CharacterCreationScreenState extends State<CharacterCreationScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 16.0, // horizontal space between items
+                          runSpacing: 16.0, // vertical space between lines
                           children: [
                             _buildClassSelection(
                               'beta',
@@ -476,7 +478,7 @@ class _CharacterCreationScreenState extends State<CharacterCreationScreen> {
     String description,
     Color color,
   ) {
-    return Expanded(
+    return Flexible(
       child: GestureDetector(
         onTap: () {
           setState(() {
@@ -485,7 +487,7 @@ class _CharacterCreationScreenState extends State<CharacterCreationScreen> {
           });
         },
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
+          width: 180, // Fixed width for each card
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: Colors.grey[800],
@@ -544,7 +546,7 @@ class _CharacterCreationScreenState extends State<CharacterCreationScreen> {
     IconData icon,
     Color color,
   ) {
-    final double percentage = value / maxValue;
+    double percentage = value / maxValue;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(

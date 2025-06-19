@@ -206,144 +206,12 @@ class _GameScreenState extends State<GameScreen> {
           ),
         ],
       ),
-      body: Row(
-        children: [
-          // Character Panel (Left Side)
-          Container(
-            width: 280,
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.grey[900]!.withOpacity(0.8),
-              border: Border(right: BorderSide(color: Colors.grey[800]!)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.blueAccent, Colors.purpleAccent],
-                    ),
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.5),
-                      width: 2,
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    widget.character.name.isNotEmpty
-                        ? widget.character.name[0].toUpperCase()
-                        : "U",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  widget.character.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getCharacterClassColor().withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    widget.character.characterClass.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _buildStatDisplay(
-                  "HP",
-                  _hp,
-                  100,
-                  Colors.redAccent,
-                  FontAwesomeIcons.heartbeat,
-                ),
-                _buildStatDisplay(
-                  "Energia",
-                  _energy,
-                  50,
-                  Colors.blueAccent,
-                  FontAwesomeIcons.bolt,
-                ),
-                _buildStatDisplay(
-                  "Experiência",
-                  _experience,
-                  100,
-                  Colors.purpleAccent,
-                  FontAwesomeIcons.star,
-                ),
-                const Divider(color: Colors.grey, height: 40),
-                Text(
-                  "Atributos",
-                  style: TextStyle(
-                    color: Colors.grey[300],
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _buildAttributeRow(
-                  "Idade",
-                  widget.character.age.toString(),
-                  FontAwesomeIcons.birthdayCake,
-                ),
-                _buildAttributeRow(
-                  "Força",
-                  widget.character.stats["strength"].toString(),
-                  FontAwesomeIcons.dumbbell,
-                  color: Colors.blue.shade300,
-                ),
-                _buildAttributeRow(
-                  "Velocidade",
-                  widget.character.stats["speed"].toString(),
-                  FontAwesomeIcons.running,
-                  color: Colors.green.shade300,
-                ),
-                _buildAttributeRow(
-                  "Psíquico",
-                  widget.character.stats["psychic"].toString(),
-                  FontAwesomeIcons.brain,
-                  color: Colors.purple.shade300,
-                ),
-                _buildAttributeRow(
-                  "Medo",
-                  widget.character.stats["fear"].toString(),
-                  FontAwesomeIcons.skull,
-                  color: Colors.red.shade300,
-                ),
-                // TODO: Add Habilidades and Inventário sections
-              ],
-            ),
-          ),
-
-          // Game Content (Right Side)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 600) {
+            // Mobile layout
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -366,46 +234,253 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ),
                   // Story Options
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _currentSegment.options.length,
-                      itemBuilder: (context, index) {
-                        final option = _currentSegment.options[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 8.0),
-                          color: Colors.grey[800]!.withOpacity(0.9),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                  ListView.builder(
+                    shrinkWrap: true, // Important for nested list views
+                    physics:
+                        const NeverScrollableScrollPhysics(), // Disable scrolling for inner list
+                    itemCount: _currentSegment.options.length,
+                    itemBuilder: (context, index) {
+                      final option = _currentSegment.options[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        color: Colors.grey[800]!.withOpacity(0.9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListTile(
+                          leading: FaIcon(
+                            _getIconForString(option.icon),
+                            color: _getColorForString(option.color),
+                            size: 20,
                           ),
-                          child: ListTile(
-                            leading: FaIcon(
-                              _getIconForString(option.icon),
-                              color: _getColorForString(option.color),
-                              size: 20,
+                          title: Text(
+                            option.text,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
                             ),
-                            title: Text(
-                              option.text,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            // subtitle: Text("Leads to segment: ${option.next}", style: TextStyle(color: Colors.grey[400], fontSize: 10)),
-                            onTap: () => _handleOptionSelected(option),
-                            tileColor: Colors.transparent,
-                            hoverColor: _getColorForString(
-                              option.color,
-                            ).withOpacity(0.2),
                           ),
-                        );
-                      },
-                    ),
+                          onTap: () => _handleOptionSelected(option),
+                          tileColor: Colors.transparent,
+                          hoverColor: _getColorForString(
+                            option.color,
+                          ).withOpacity(0.2),
+                        ),
+                      );
+                    },
                   ),
+                  const SizedBox(height: 24),
+                  // Character Panel Summary for Mobile (Optional, can be expanded)
+                  _buildCharacterSummaryPanel(),
                 ],
               ),
-            ),
-          ),
-        ],
+            );
+          } else {
+            // Desktop/Tablet layout
+            return Row(
+              children: [
+                // Character Panel (Left Side)
+                Container(
+                  width: 280,
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900]!.withOpacity(0.8),
+                    border: Border(right: BorderSide(color: Colors.grey[800]!)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 20),
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Colors.blueAccent, Colors.purpleAccent],
+                          ),
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.5),
+                            width: 2,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.character.name.isNotEmpty
+                              ? widget.character.name[0].toUpperCase()
+                              : "U",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        widget.character.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getCharacterClassColor().withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          widget.character.characterClass.toUpperCase(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      _buildStatDisplay(
+                        "HP",
+                        _hp,
+                        100,
+                        Colors.redAccent,
+                        FontAwesomeIcons.heartbeat,
+                      ),
+                      _buildStatDisplay(
+                        "Energia",
+                        _energy,
+                        50,
+                        Colors.blueAccent,
+                        FontAwesomeIcons.bolt,
+                      ),
+                      _buildStatDisplay(
+                        "Experiência",
+                        _experience,
+                        100,
+                        Colors.purpleAccent,
+                        FontAwesomeIcons.star,
+                      ),
+                      const Divider(color: Colors.grey, height: 40),
+                      Text(
+                        "Atributos",
+                        style: TextStyle(
+                          color: Colors.grey[300],
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildAttributeRow(
+                        "Idade",
+                        widget.character.age.toString(),
+                        FontAwesomeIcons.birthdayCake,
+                      ),
+                      _buildAttributeRow(
+                        "Força",
+                        widget.character.stats["strength"].toString(),
+                        FontAwesomeIcons.dumbbell,
+                        color: Colors.blue.shade300,
+                      ),
+                      _buildAttributeRow(
+                        "Velocidade",
+                        widget.character.stats["speed"].toString(),
+                        FontAwesomeIcons.running,
+                        color: Colors.green.shade300,
+                      ),
+                      _buildAttributeRow(
+                        "Psíquico",
+                        widget.character.stats["psychic"].toString(),
+                        FontAwesomeIcons.brain,
+                        color: Colors.purple.shade300,
+                      ),
+                      _buildAttributeRow(
+                        "Medo",
+                        widget.character.stats["fear"].toString(),
+                        FontAwesomeIcons.skull,
+                        color: Colors.red.shade300,
+                      ),
+                      // TODO: Add Habilidades and Inventário sections
+                    ],
+                  ),
+                ),
+
+                // Game Content (Right Side)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Story Text
+                        Container(
+                          padding: const EdgeInsets.all(20.0),
+                          margin: const EdgeInsets.only(bottom: 24.0),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[900]!.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(12.0),
+                            border: Border.all(color: Colors.grey[800]!),
+                          ),
+                          child: Text(
+                            _currentSegment.text,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                        // Story Options
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: _currentSegment.options.length,
+                            itemBuilder: (context, index) {
+                              final option = _currentSegment.options[index];
+                              return Card(
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                ),
+                                color: Colors.grey[800]!.withOpacity(0.9),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: ListTile(
+                                  leading: FaIcon(
+                                    _getIconForString(option.icon),
+                                    color: _getColorForString(option.color),
+                                    size: 20,
+                                  ),
+                                  title: Text(
+                                    option.text,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  onTap: () => _handleOptionSelected(option),
+                                  tileColor: Colors.transparent,
+                                  hoverColor: _getColorForString(
+                                    option.color,
+                                  ).withOpacity(0.2),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
@@ -499,5 +574,84 @@ class _GameScreenState extends State<GameScreen> {
       default:
         return Colors.grey;
     }
+  }
+
+  Widget _buildCharacterSummaryPanel() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[900]!.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: Colors.grey[800]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "${widget.character.name} (${widget.character.characterClass.toUpperCase()})",
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          _buildStatDisplay(
+            "HP",
+            _hp,
+            100,
+            Colors.redAccent,
+            FontAwesomeIcons.heartbeat,
+          ),
+          _buildStatDisplay(
+            "Energia",
+            _energy,
+            50,
+            Colors.blueAccent,
+            FontAwesomeIcons.bolt,
+          ),
+          _buildStatDisplay(
+            "Experiência",
+            _experience,
+            100,
+            Colors.purpleAccent,
+            FontAwesomeIcons.star,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            "Atributos Principais:",
+            style: TextStyle(
+              color: Colors.grey[300],
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          _buildAttributeRow(
+            "Força",
+            widget.character.stats["strength"].toString(),
+            FontAwesomeIcons.dumbbell,
+            color: Colors.blue.shade300,
+          ),
+          _buildAttributeRow(
+            "Velocidade",
+            widget.character.stats["speed"].toString(),
+            FontAwesomeIcons.running,
+            color: Colors.green.shade300,
+          ),
+          _buildAttributeRow(
+            "Psíquico",
+            widget.character.stats["psychic"].toString(),
+            FontAwesomeIcons.brain,
+            color: Colors.purple.shade300,
+          ),
+          _buildAttributeRow(
+            "Medo",
+            widget.character.stats["fear"].toString(),
+            FontAwesomeIcons.skull,
+            color: Colors.red.shade300,
+          ),
+        ],
+      ),
+    );
   }
 }
