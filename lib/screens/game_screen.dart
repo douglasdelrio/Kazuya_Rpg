@@ -45,6 +45,7 @@ class _GameScreenState extends State<GameScreen> {
           _history = [1];
         }
       } else {
+        // This part is for regular options, not chapter end buttons
         final nextSegment = storyData.firstWhere(
           (segment) => segment.id == option.next,
           orElse: () => _currentSegment,
@@ -60,6 +61,33 @@ class _GameScreenState extends State<GameScreen> {
           }
         }
       }
+    });
+  }
+
+  bool _isChapterEndSegment(StorySegment segment) {
+    return segment.options.any(
+      (option) =>
+          option.text.contains('[Fim do Capítulo') ||
+          option.text.contains('[Fim do Jogo]'),
+    );
+  }
+
+  void _goToNextChapter() {
+    setState(() {
+      final currentChapterEndOption = _currentSegment.options.firstWhere(
+        (option) =>
+            option.text.contains('[Fim do Capítulo') ||
+            option.text.contains('[Fim do Jogo]'),
+      );
+      // Ensure the next segment ID is valid before attempting to find it
+      final int nextSegmentId = currentChapterEndOption.next;
+      _currentSegment = storyData.firstWhere(
+        (segment) => segment.id == nextSegmentId,
+        orElse: () => storyData.firstWhere(
+          (s) => s.id == 1,
+        ), // Fallback to game start if ID not found
+      );
+      _history = [_currentSegment.id]; // Reset history for new chapter
     });
   }
 
@@ -130,7 +158,7 @@ class _GameScreenState extends State<GameScreen> {
       case "walking":
         return FontAwesomeIcons.walking;
       case "backpack":
-        return FontAwesomeIcons.suitcase;
+        return FontAwesomeIcons.shoppingBag;
       case "user-clock":
         return FontAwesomeIcons.userClock;
       case "redo":
@@ -322,28 +350,6 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  bool _isChapterEndSegment(StorySegment segment) {
-    return segment.options.any(
-      (option) =>
-          option.text.contains('[Fim do Capítulo') ||
-          option.text.contains('[Fim do Jogo]'),
-    );
-  }
-
-  void _goToNextChapter() {
-    setState(() {
-      final currentChapterEndOption = _currentSegment.options.firstWhere(
-        (option) =>
-            option.text.contains('[Fim do Capítulo') ||
-            option.text.contains('[Fim do Jogo]'),
-      );
-      _currentSegment = storyData.firstWhere(
-        (segment) => segment.id == currentChapterEndOption.next,
-      );
-      _history = [_currentSegment.id]; // Reset history for new chapter
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -428,6 +434,11 @@ class _GameScreenState extends State<GameScreen> {
                     itemCount: _currentSegment.options.length,
                     itemBuilder: (context, index) {
                       final option = _currentSegment.options[index];
+                      // Hide chapter end options from the main list, they are handled by the button
+                      if (option.text.contains('[Fim do Capítulo') ||
+                          option.text.contains('[Fim do Jogo]')) {
+                        return const SizedBox.shrink();
+                      }
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         color: Colors.grey[800]!.withOpacity(0.9),
@@ -460,7 +471,7 @@ class _GameScreenState extends State<GameScreen> {
                     const SizedBox(height: 24),
                     Center(
                       child: ElevatedButton(
-                        onPressed: _goToNextChapter,
+                        onPressed: _goToNextChapter, // Use the new handler
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Colors.blueAccent, // Cor de fundo do botão
@@ -669,6 +680,11 @@ class _GameScreenState extends State<GameScreen> {
                             itemCount: _currentSegment.options.length,
                             itemBuilder: (context, index) {
                               final option = _currentSegment.options[index];
+                              // Hide chapter end options from the main list, they are handled by the button
+                              if (option.text.contains('[Fim do Capítulo') ||
+                                  option.text.contains('[Fim do Jogo]')) {
+                                return const SizedBox.shrink();
+                              }
                               return Card(
                                 margin: const EdgeInsets.symmetric(
                                   vertical: 8.0,
@@ -704,7 +720,8 @@ class _GameScreenState extends State<GameScreen> {
                           const SizedBox(height: 24),
                           Center(
                             child: ElevatedButton(
-                              onPressed: _goToNextChapter,
+                              onPressed:
+                                  _goToNextChapter, // Use the new handler
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     Colors.blueAccent, // Cor de fundo do botão
